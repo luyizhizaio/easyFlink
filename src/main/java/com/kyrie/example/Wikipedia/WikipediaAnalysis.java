@@ -1,4 +1,4 @@
-package com.kyrie.example.Wikipedia;
+package com.kyrie.stream.Wikipedia;
 
 import org.apache.flink.api.common.functions.FoldFunction;
 import org.apache.flink.api.java.functions.KeySelector;

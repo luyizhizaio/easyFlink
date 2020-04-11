@@ -26,7 +26,7 @@ object WordCount {
         env.readTextFile(params.get("input"))
       } else{
         //利用数组创建DataSet
-        env.fromCollection(List("nihao scala","hello flink","fuck world"))
+        env.fromCollection(List("nihao scala","hello flink world","fuck world"))
 
       }
     //业务处理
