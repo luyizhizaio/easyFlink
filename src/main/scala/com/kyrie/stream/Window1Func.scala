@@ -27,6 +27,7 @@ object Window1Func {
     val env = StreamExecutionEnvironment.getExecutionEnvironment
 
     //默认是 processing time ；修改为 event time.
+    //注意：Event Time 的使用一定要指定数据源中的时间戳。否则程序无法知道事件的事件时间是什么(数据源里的数据没有时间戳的话，就只能使用 Processing Time 了)。
    // env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
 
     //定义 kafka topic，数据类型
