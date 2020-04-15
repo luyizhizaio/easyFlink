@@ -48,6 +48,7 @@ object Watermark2TumblingEventTimeWindows {
 
     textKeyStream.print("textkey:")
 
+    //设置滚动窗口
     val windowStream =textKeyStream.window(TumblingEventTimeWindows.of(Time.seconds(10)))
 
     val reduceStream = windowStream.reduce((a,b) => (a._1, a._2 +b._2,a._3 +b._3))
