@@ -1,37 +1,56 @@
 package com.kyrie.processfunction
 
 import com.kyrie.stream.Feedback2
-import org.apache.flink.api.common.state.StateTtlConfig.TimeCharacteristic
 import org.apache.flink.api.common.state.{ValueState, ValueStateDescriptor}
 import org.apache.flink.api.scala.typeutils.Types
+import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction
+import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 import org.apache.flink.util.Collector
 import org.apache.flink.streaming.api.scala._
+import org.apache.flink.streaming.api.windowing.time.Time
 
-object Fun1KeyedProcessFunction {
+/**
+ * 实现：eventtime的keyedprocessfunction ,但遇到问题，watermark 没起到作用，currenteventtime 为integer_min
+ */
+object Fun1KeyedProcessFunctionWaterMark {
 
   def main(args: Array[String]): Unit = {
 
-    """
-      |KeyedProcessFunction 用来操作 KeyedStream；继承富函数的类 。
-      |KeyedProcessFunction 会处理流的每一个元素，输出为 0 个、1 个或者多个元素。
-      |""".stripMargin
 
     val env = StreamExecutionEnvironment.getExecutionEnvironment
+
+    //设置为事件时间
+    env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
+
 
     // nc -lk 9999
     val stream = env.socketTextStream("localhost",9999)
 
-    val keyStream = stream.map{line =>
-      val Array(id ,ts,fre) =line.split(" ")
-      Feedback2(id,ts.toLong,fre.toInt)
-    }.keyBy(_.id)
+    val mapStream = stream.flatMap{line =>
+      if(line.trim !=""){
+        val Array(id ,ts,fre) =line.split(" ")
+        Some(Feedback2(id,ts.toLong,fre.toInt))
+      }else None
+    }
 
-    keyStream.print("keystream:")
+    mapStream.print("keystream:")
+
+
+   val wmStream = mapStream.assignTimestampsAndWatermarks(
+     new BoundedOutOfOrdernessTimestampExtractor[Feedback2](Time.milliseconds(1000)) {
+     //提取时间戳。单位是毫秒
+     override
+     def extractTimestamp(element: Feedback2): Long = {
+       element.timestamp * 1000 //时间戳是秒 乘以1000转成毫秒
+     }
+   }).keyBy(_.id)
+
+    wmStream.print("wmStream:")
 
     //执行process function
-    val processStream = keyStream.process(new TempIncreaseAlertFunction)
+    val processStream = wmStream.process(new TempIncreaseAlertFunction2)
 
     processStream.print("process:")
 
@@ -44,7 +63,7 @@ object Fun1KeyedProcessFunction {
 /**
  * 实现功能：10秒内温度连续上升，发出报警
  */
-class TempIncreaseAlertFunction extends KeyedProcessFunction[String,Feedback2,String]{
+class TempIncreaseAlertFunction2 extends KeyedProcessFunction[String,Feedback2,String]{
 
   /**
    * 使用状态存储 上一次的数据
@@ -77,18 +96,19 @@ class TempIncreaseAlertFunction extends KeyedProcessFunction[String,Feedback2,St
     lastTempState.update(fb.fre)
 
     if(lastTemp == 0.0 || fb.fre < lastTemp){//温度下降
-
+      println("delet timer:" +curTimerTimestamp)
       //删除定时器
-      ctx.timerService().deleteProcessingTimeTimer(curTimerTimestamp)
+      ctx.timerService().deleteEventTimeTimer(curTimerTimestamp)
       //清除定时时间戳
       currentTimerState.clear()
     }else if(fb.fre > lastTemp && curTimerTimestamp ==0){//温度上升
 
       //设置定时器执行时间，一秒之后执行
-      val timerTs = ctx.timerService().currentProcessingTime() +10000
+      val timerTs = ctx.timerService().currentWatermark() +10000
       println("set timerTs："+timerTs)
+
       //注册程序时间定时器
-      ctx.timerService().registerProcessingTimeTimer(timerTs)
+      ctx.timerService().registerEventTimeTimer(timerTs)
 
       //保存定时器时间戳
       currentTimerState.update(timerTs)
@@ -112,14 +132,6 @@ class TempIncreaseAlertFunction extends KeyedProcessFunction[String,Feedback2,St
 
     out.collect("传感器ID为"+ctx.getCurrentKey+"10秒内温度连续上升")
     currentTimerState.clear()
-
-    /**日志：
-    keystream::3> Feedback2(id1,1586962181,1)
-keystream::3> Feedback2(id1,1586962181,10)
-set timerTs：1587218352141
-ontimer timestamp:1587218352141
-process::3> 传感器ID为id110秒内温度连续上升
-     */
 
 
   }

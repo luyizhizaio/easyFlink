@@ -14,7 +14,7 @@ object Watermark2TumblingEventTimeWindows {
 
   """
     |水位线+windows 用于处理乱序数据
-   """
+   """.stripMargin
 
   def main(args: Array[String]): Unit = {
 
@@ -40,7 +40,7 @@ object Watermark2TumblingEventTimeWindows {
         //提取时间戳。单位是毫秒
         override
         def extractTimestamp(element: (String, Long, Int)): Long = {
-          element._2 * 1000 //时间戳是秒 乘以1000转成秒
+          element._2 * 1000 //时间戳是秒 乘以1000转成毫秒
         }
       })
 
