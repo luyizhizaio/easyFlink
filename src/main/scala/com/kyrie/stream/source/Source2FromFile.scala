@@ -1,7 +1,7 @@
 package com.kyrie.stream.source
 
 import com.kyrie.stream.WordWithCount
-import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
+import org.apache.flink.streaming.api.scala._
 
 /**
  * 集合中读取数据

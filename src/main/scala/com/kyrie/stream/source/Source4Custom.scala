@@ -1,6 +1,6 @@
 package com.kyrie.stream.source
 
-import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
+import org.apache.flink.streaming.api.scala._
 
 /**
  * 自定义source
