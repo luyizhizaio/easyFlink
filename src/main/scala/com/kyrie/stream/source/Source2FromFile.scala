@@ -1,6 +1,6 @@
-package com.kyrie.stream
+package com.kyrie.stream.source
 
-import org.apache.flink.api.scala._
+import com.kyrie.stream.WordWithCount
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 
 /**

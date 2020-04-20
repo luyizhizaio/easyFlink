@@ -1,11 +1,11 @@
-package com.kyrie.stream
+package com.kyrie.stream.source
 
 import java.util.Properties
 
+import com.kyrie.stream.WordWithCount
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
-import org.apache.flink.streaming.connectors.kafka._
-import org.apache.flink.api.scala._
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer011
 
 object Source3FromKafka {
 

@@ -1,6 +1,6 @@
 package com.kyrie.stream
 
-import com.kyrie.stream.Source1FromCollection.Feedback
+import com.kyrie.stream.source.Source1FromCollection.Feedback
 import org.apache.flink.streaming.api.functions.source.SourceFunction
 
 import scala.util.Random

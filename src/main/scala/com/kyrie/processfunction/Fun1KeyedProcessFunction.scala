@@ -1,6 +1,6 @@
 package com.kyrie.processfunction
 
-import com.kyrie.stream.Feedback2
+import com.kyrie.stream.watermark.Feedback2
 import org.apache.flink.api.common.state.StateTtlConfig.TimeCharacteristic
 import org.apache.flink.api.common.state.{ValueState, ValueStateDescriptor}
 import org.apache.flink.api.scala.typeutils.Types
@@ -14,6 +14,10 @@ object Fun1KeyedProcessFunction {
   def main(args: Array[String]): Unit = {
 
     """
+      |process function
+      |转换算子是无法访问事件的时间戳信息和水位线信息的。
+      |基于此，DataStream API 提供了一系列的 Low-Level 转换算子。可以访问时间戳、watermark 以及注册定时事件。
+      |
       |KeyedProcessFunction 用来操作 KeyedStream；继承富函数的类 。
       |KeyedProcessFunction 会处理流的每一个元素，输出为 0 个、1 个或者多个元素。
       |""".stripMargin

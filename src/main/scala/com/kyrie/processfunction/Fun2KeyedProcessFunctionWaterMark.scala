@@ -1,6 +1,6 @@
 package com.kyrie.processfunction
 
-import com.kyrie.stream.Feedback2
+import com.kyrie.stream.watermark.Feedback2
 import org.apache.flink.api.common.state.{ValueState, ValueStateDescriptor}
 import org.apache.flink.api.scala.typeutils.Types
 import org.apache.flink.streaming.api.TimeCharacteristic

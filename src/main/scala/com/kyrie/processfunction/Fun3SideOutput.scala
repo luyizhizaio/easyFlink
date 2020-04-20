@@ -1,6 +1,6 @@
 package com.kyrie.processfunction
 
-import com.kyrie.stream.Feedback2
+import com.kyrie.stream.watermark.Feedback2
 import org.apache.flink.streaming.api.functions.ProcessFunction
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 import org.apache.flink.streaming.api.scala._

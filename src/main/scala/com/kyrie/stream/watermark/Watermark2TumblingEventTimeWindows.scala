@@ -1,14 +1,10 @@
-package com.kyrie.stream
+package com.kyrie.stream.watermark
 
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
-import org.apache.flink.streaming.api.windowing.time.Time
-import org.apache.flink.streaming.api.scala._
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
-
-import scala.collection.mutable
-
+import org.apache.flink.streaming.api.windowing.time.Time
 
 object Watermark2TumblingEventTimeWindows {
 
