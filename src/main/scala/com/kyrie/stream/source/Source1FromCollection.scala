@@ -6,10 +6,10 @@ import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
  * 集合中读取数据
  */
 
-
+case class Feedback(deviceId:String,idtype:String,media:String)
 
 object Source1FromCollection {
-  case class Feedback(deviceId:String,idtype:String,media:String)
+
 
   def main(args: Array[String]): Unit = {
 

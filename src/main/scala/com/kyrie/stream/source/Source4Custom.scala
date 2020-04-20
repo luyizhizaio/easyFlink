@@ -1,6 +1,5 @@
 package com.kyrie.stream.source
 
-import com.kyrie.stream.MyFeedbackSource
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 
 /**
