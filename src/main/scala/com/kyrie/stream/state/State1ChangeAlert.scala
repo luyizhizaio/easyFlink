@@ -30,7 +30,9 @@ object State1ChangeAlert {
     keyStream.print("key:")
 
     //定义flatMap类，并执行
-    val flatStream = keyStream.flatMap(new TemperatureAlertFunction(10))
+    //val flatStream = keyStream.flatMap(new TemperatureAlertFunction(10))
+
+    keyStream.flatMapWithState()
 
     flatStream.print("flat:")
 
