@@ -29,10 +29,21 @@ object State1ChangeAlert {
 
     keyStream.print("key:")
 
-    //定义flatMap类，并执行
+    //1.定义flatMap类，并执行
     //val flatStream = keyStream.flatMap(new TemperatureAlertFunction(10))
 
-    keyStream.flatMapWithState()
+    //2.使用flatmapstate方式实现
+    val flatStream = keyStream.flatMapWithState[(String,Int,Int),Int]{
+      case(fb:Feedback2,None) =>
+        (List.empty,Some(fb.fre))
+      case (fb:Feedback2,lastTemp:Some[Int]) =>
+        val tempdiff = (fb.fre - lastTemp.get).abs
+        if (tempdiff > 10){
+          (List((fb.id,lastTemp.get,fb.fre)),Some(fb.fre))
+        }else{
+          (List.empty,Some(fb.fre))
+        }
+    }
 
     flatStream.print("flat:")
 
