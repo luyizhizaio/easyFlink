@@ -4,20 +4,27 @@ import com.kyrie.stream.watermark.Feedback2
 import org.apache.flink.api.common.functions.RichFlatMapFunction
 import org.apache.flink.api.common.state.{ValueState, ValueStateDescriptor}
 import org.apache.flink.configuration.Configuration
+import org.apache.flink.runtime.state.memory.MemoryStateBackend
 import org.apache.flink.streaming.api.scala._
 import org.apache.flink.util.Collector
 import sun.plugin2.jvm.CircularByteBuffer.Streamer
 
 /**
- * 状态编程
- * demo：两次变化超过10发出报警
+ * 状态后端
  */
-object State1ChangeAlert {
+object State2StateBackend {
 
   def main(args: Array[String]): Unit = {
 
+    """
+      |状态后端两个功能：负责本地状态管理，将检查点状态写入远程存储。
+      |""".stripMargin
+
 
     val  env = StreamExecutionEnvironment.getExecutionEnvironment
+
+    //设置状态后端
+    env.setStateBackend(new MemoryStateBackend())
 
 
     val stream = env.socketTextStream("localhost",9999)
@@ -31,7 +38,7 @@ object State1ChangeAlert {
     keyStream.print("key:")
 
     //1.定义flatMap类，并执行
-    //val flatStream = keyStream.flatMap(new TemperatureAlertFunction(10))
+    //val flatStream = keyStream.flatMap(new TemperatureAlertFunction2(10))
 
     //2.使用flatmapstate方式实现
     val flatStream = keyStream.flatMapWithState[(String,Int,Int),Int]{
@@ -54,7 +61,7 @@ object State1ChangeAlert {
 
 }
 
-class TemperatureAlertFunction(threshold:Int) extends RichFlatMapFunction[Feedback2,(String,Int,Int)]{
+class TemperatureAlertFunction2(threshold:Int) extends RichFlatMapFunction[Feedback2,(String,Int,Int)]{
 
   private var lastTempState:ValueState[Int] =_
 
