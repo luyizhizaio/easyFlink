@@ -9,8 +9,9 @@ import org.apache.flink.configuration.Configuration
 import org.apache.flink.runtime.state.filesystem.FsStateBackend
 import org.apache.flink.shaded.netty4.io.netty.handler.codec.http2.Http2Exception.StreamException
 import org.apache.flink.streaming.api.CheckpointingMode
+import org.apache.flink.streaming.api.environment.CheckpointConfig
 import org.apache.flink.streaming.api.scala._
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer011
+import org.apache.flink.streaming.connectors.kafka.{FlinkKafkaConsumer011, FlinkKafkaConsumerBase}
 import org.apache.flink.util.Collector
 
 /**
@@ -30,6 +31,10 @@ object CheckPoint2Kafka {
     |sink —— kafka producer 作为 sink，采用两阶段提交 sink，需要实现一个
     |TwoPhaseCommitSinkFunction
     |
+    |从checkpoint中恢复：
+    |-s 后面接的就是待恢复checkpoint的路径。
+    |bin/flink run -s hdfs://namenode:9000/flink/checkpoints/467e17d2cc343e6c56255d222bae3421/chk-56/_metadata flink-job.jar
+    |
     |""".stripMargin
 
   def main(args: Array[String]): Unit = {
@@ -40,9 +45,13 @@ object CheckPoint2Kafka {
     //checkpoint
     env.enableCheckpointing(10000,CheckpointingMode.EXACTLY_ONCE)
     env.getCheckpointConfig.setFailOnCheckpointingErrors(true)
+    //表示一旦Flink程序被cancel后，会保留checkpoint数据，以便根据实际需要恢复到指定的checkpoint
+    env.getCheckpointConfig.enableExternalizedCheckpoints(CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION)
+
     //设置状态后端：
     env.setStateBackend(new FsStateBackend("file:///Users/jiangyuanyuan/changyue/lcycode/gitHub/easyFlink/ckpt/kafka") )
 
+    println("external:"+env.getCheckpointConfig.isExternalizedCheckpointsEnabled)
 
     //kafka
     val properties = new Properties()
@@ -52,7 +61,8 @@ object CheckPoint2Kafka {
       "org.apache.kafka.common.serialization.StringDeserializer")
     properties.setProperty("value.deserializer",
       "org.apache.kafka.common.serialization.StringDeserializer")
-    //properties.setProperty("auto.offset.reset", "latest")
+   // properties.setProperty("auto.offset.reset", "latest")
+    properties.put(FlinkKafkaConsumerBase.KEY_PARTITION_DISCOVERY_INTERVAL_MILLIS, "3000")
 
 
     //定义 kafka topic，数据类型
@@ -71,11 +81,11 @@ object CheckPoint2Kafka {
     val evenStream:DataStream[(String,Int)] = splitStream.select("even")
     val oddStream:DataStream[(String,Int)] = splitStream.select("odd")
 
-    val evenSumStream =evenStream.keyBy(_._1).flatMap(new AddFunction())
-    val oddSumStream =oddStream.keyBy(_._1).flatMap(new AddFunction())
+    val evenSumStream =evenStream.keyBy(_._1).flatMap(new AddFunction("evenf"))
+    val oddSumStream =oddStream.keyBy(_._1).flatMap(new AddFunction("oddf"))
 
-    evenSumStream.print("even:")
-    oddSumStream.print("odd:")
+    evenSumStream.print("---even:")
+    oddSumStream.print("---odd:")
 
     env.execute()
 
@@ -84,13 +94,13 @@ object CheckPoint2Kafka {
 
 }
 
-class AddFunction extends RichFlatMapFunction[(String,Int),(String,Int)]{
+class AddFunction(stateName:String) extends RichFlatMapFunction[(String,Int),(String,Int)]{
 
   private var sumState:ValueState[Int] =_
 
   override def open(parameters: Configuration): Unit = {
 
-    val descriptor = new ValueStateDescriptor[Int]("lastTemp",classOf[Int])
+    val descriptor = new ValueStateDescriptor[Int](stateName,classOf[Int])
 
     sumState = getRuntimeContext.getState[Int](descriptor)
   }
