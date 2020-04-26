@@ -46,7 +46,10 @@ object SQL2Window {
    // val resultTable = table.window(Tumble over 10.second on 'ts as 'tt ).groupBy('id,'tt).select('id,'id.count)
 
     //滑动窗口
-    val resultTable = table.window(Slide over 10.second every  5.second on 'ts as 'tt ).groupBy('id,'tt).select('id,'id.count)
+    //注意：如果使用的 api 包括时间窗口，那么窗口的字段必须出现在 groupBy 中。
+    val resultTable = table.window(Slide over 10.second every  5.second on 'ts as 'tt )
+      .groupBy('id,'tt)
+      .select('id,'id.count)
 
     val resultStream = tableEnv.toAppendStream[(String,Long)](resultTable)
 
