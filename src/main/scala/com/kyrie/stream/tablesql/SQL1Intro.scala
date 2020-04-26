@@ -43,13 +43,13 @@ object SQL1Intro {
 
   def tupleTable(stream:DataStream[String])={
 
-    import org.apache.flink.api.scala._
+
     /*********************************************/
 
-    val stream2:DataStream[(String,Long,Int)]= stream.map[(String,Long,Int)]{line =>
-      val Array(id,ts,num) = line.split(",")
-      (id,ts.toLong,num.toInt)
-    }
+//    val stream2:DataStream[(String,Long,Int)]= stream.map[(String,Long,Int)]{line =>
+//      val Array(id,ts,num) = line.split(",")
+//      (id,ts.toLong,num.toInt)
+//    }
 
     //转换元祖为table，指定字段名称
 //    val tab3 = tableEnv.fromDataStream(stream2, 'id2, 'ts, 'fre)
