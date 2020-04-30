@@ -44,7 +44,7 @@ object HotItems {
       .timeWindow(Time.hours(1),Time.minutes(5))
       .aggregate(new CountAgg(),new WindowAgg())  //窗口聚合,有状态的算子；两个参数：预聚合函数，窗口聚合函数
       .keyBy(_.windowEnd) //按照窗口分组
-      .process(new TopNItems(5)) //实现排序 取出topN
+      .process(new TopNItems(5)) //状态编程：实现排序 取出topN
 
     processStream.print()
 
