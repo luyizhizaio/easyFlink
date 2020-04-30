@@ -2,7 +2,6 @@ package com.ecommerce.hotItem
 
 import java.sql.Timestamp
 
-import com.sun.tools.corba.se.idl.constExpr.Times
 import org.apache.flink.api.common.functions.AggregateFunction
 import org.apache.flink.api.common.state.{ListState, ListStateDescriptor}
 import org.apache.flink.configuration.Configuration
