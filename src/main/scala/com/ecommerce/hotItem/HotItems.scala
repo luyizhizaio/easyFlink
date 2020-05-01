@@ -2,6 +2,7 @@ package com.ecommerce.hotItem
 
 import java.sql.Timestamp
 
+import com.ecommerce.UserBehavior
 import org.apache.flink.api.common.functions.AggregateFunction
 import org.apache.flink.api.common.state.{ListState, ListStateDescriptor}
 import org.apache.flink.configuration.Configuration
@@ -19,7 +20,7 @@ import scala.collection.mutable.ListBuffer
  * 根据pv访问量统计热门商品
  */
 
-case class UserBehavior(userId:Long,itemId:Long,category:Int,behavior:String,timestamp:Long)
+
 //count 数量
 case class ItemViewCount(itemId:Long,windowEnd:Long,count:Long)
 

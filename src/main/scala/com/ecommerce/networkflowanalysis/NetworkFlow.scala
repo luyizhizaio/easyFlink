@@ -2,6 +2,7 @@ package com.ecommerce.networkflowanalysis
 
 import java.text.SimpleDateFormat
 
+import com.ecommerce.ApacheLogEvent
 import org.apache.flink.api.common.functions.AggregateFunction
 import org.apache.flink.api.common.state.ListStateDescriptor
 import org.apache.flink.streaming.api.TimeCharacteristic
@@ -20,8 +21,6 @@ import scala.collection.mutable.ListBuffer
  * 通过apachelog 统计热门页面
  * 如果延迟过大,watermark要求低延迟，所以后面还要对迟到数据做处理
  */
-
-case class ApacheLogEvent(ip:String,userId:String,eventTime:Long,method:String,url:String)
 
 case class UrlViewCount(url:String,windowEnd:Long,count:Long)
 
