@@ -11,3 +11,6 @@ case class ApacheLogEvent(ip:String,userId:String,eventTime:Long,method:String,u
 
 //937166,1715,beijing,beijing,1511661711
 case class AdClickLog(userId:Long,adId:Long,province:String,city:String,timestamp:Long)
+
+//23064,66.249.3.15,fail,1558430826
+case class LoginLog(userId:Long,ip:String,state:String,timestamp:Long)
