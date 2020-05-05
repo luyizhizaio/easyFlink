@@ -7,7 +7,6 @@ import org.apache.flink.configuration.Configuration
 import org.apache.flink.runtime.state.memory.MemoryStateBackend
 import org.apache.flink.streaming.api.scala._
 import org.apache.flink.util.Collector
-import sun.plugin2.jvm.CircularByteBuffer.Streamer
 
 /**
  * 状态后端
