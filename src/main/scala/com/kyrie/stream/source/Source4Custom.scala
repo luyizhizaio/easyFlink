@@ -12,9 +12,9 @@ object Source4Custom {
     val env = StreamExecutionEnvironment.getExecutionEnvironment
 
     //自定义source ，只需要继承SourceFunction即可
-    val stream1 = env.addSource(new MyFeedbackSource())
+    val stream1 = env.addSource(new ClickSource())
 
-    stream1.keyBy("media").print().setParallelism(1)
+    stream1.keyBy(_.user).print()
 
 
     env.execute("pangzi")

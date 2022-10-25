@@ -22,7 +22,7 @@ object Source1FromCollection {
       Feedback("q1w2e3","mac","mt")
     ))
 
-    stream1.keyBy("media").print().setParallelism(1)
+    stream1.keyBy(_.media).print("1").setParallelism(3) //设置并行度
 
     env.execute()
 

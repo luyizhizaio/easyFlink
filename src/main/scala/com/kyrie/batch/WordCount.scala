@@ -26,13 +26,13 @@ object WordCount {
         env.readTextFile(params.get("input"))
       } else{
         //利用数组创建DataSet
-        env.fromCollection(List("nihao scala","hello flink world","fuck world"))
+        env.fromCollection(List("nihao scala world","hello flink world","fuck world"))
 
       }
     //业务处理
     val counts = text.flatMap{_.toLowerCase.split("\\W+") filter{_.nonEmpty}}
       .map{(_,1)}
-      .groupBy(0)//根据inde=0的字段分组
+      .groupBy(0)//根据index=0的字段分组
       .sum(1) //根据inde=1的字段sum
 
 
