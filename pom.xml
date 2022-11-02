@@ -59,6 +59,32 @@
       <version>${flink.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.ververica</groupId>
+      <artifactId>flink-connector-mysql-cdc</artifactId>
+      <version>2.0.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.49</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.flink</groupId>
+      <artifactId>flink-table-api-scala-bridge_${scala.compat.version}</artifactId>
+      <version>${flink.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.flink</groupId>
+      <artifactId>flink-table-planner-blink_${scala.compat.version}</artifactId>
+      <version>${flink.version}</version>
+    </dependency>
+
+
+
   </dependencies>
 
 
